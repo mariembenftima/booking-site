@@ -1,6 +1,7 @@
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import '../styles.css'
 
 export default async function LocaleLayout({
@@ -16,7 +17,12 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <header className="flex justify-end p-4">
+            <LanguageSwitcher />
+          </header>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   )
