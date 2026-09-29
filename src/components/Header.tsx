@@ -27,7 +27,7 @@ function Leaf() {
   )
 }
 
-export function Header() {
+export function Header({ businessName }: { businessName: string }) {
   const t = useTranslations('Nav')
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
@@ -60,10 +60,9 @@ export function Header() {
           scrolled ? 'py-3' : 'py-5',
         )}
       >
-        {/* TODO Week 2: business name comes from Payload SiteSettings */}
         <Link href="/" onClick={close} className="group flex items-center gap-2">
           <Leaf />
-          <span className="font-heading text-2xl font-semibold tracking-tight">Maison Sauge</span>
+          <span className="font-heading text-2xl font-semibold tracking-tight">{businessName}</span>
         </Link>
 
         {/* Desktop navigation */}

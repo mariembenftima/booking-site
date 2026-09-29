@@ -118,7 +118,7 @@ export async function Footer() {
 
       <div className="relative border-t border-background/15">
         <p className="mx-auto max-w-6xl px-6 py-6 text-sm text-background/60">
-          {t('rights', { year })}
+          {t('rights', { year, name })}
         </p>
       </div>
     </footer>

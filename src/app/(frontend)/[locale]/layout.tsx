@@ -1,6 +1,8 @@
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { Geist, Cormorant_Garamond } from 'next/font/google'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { routing } from '@/i18n/routing'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
@@ -27,11 +29,15 @@ export default async function LocaleLayout({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
 
+  // The business name comes from Payload: Settings → Site settings
+  const payload = await getPayload({ config })
+  const settings = await payload.findGlobal({ slug: 'site-settings' })
+
   return (
     <html lang={locale} className={`${geist.variable} ${cormorant.variable}`}>
       <body className="flex min-h-screen flex-col">
         <NextIntlClientProvider>
-          <Header />
+          <Header businessName={settings.businessName ?? ''} />
           <div className="flex-1">{children}</div>
           <Footer />
         </NextIntlClientProvider>

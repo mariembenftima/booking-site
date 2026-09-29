@@ -44,6 +44,6 @@
     "tagline": "Beauty & wellness, by appointment.",
     "explore": "Explore",
     "founder": "Founder",
-    "rights": "© {year} Maison Sauge. All rights reserved."
+    "rights": "© {year} {name}. All rights reserved."
   }
 }
