@@ -1,0 +1,47 @@
+// Maison Sauge — admin panel colours (sage-tinted)
+// Payload builds every grey (backgrounds, text, borders, buttons) from this scale.
+// 0 = lightest, 1000 = darkest. Dark mode uses the same scale in reverse.
+:root {
+  --color-base-0: #FFFFFF;
+  --color-base-50: #F8FAF8;
+  --color-base-100: #F0F4F2;
+  --color-base-150: #E8EDEA;
+  --color-base-200: #DFE7E2;
+  --color-base-250: #D0DCD5;
+  --color-base-300: #BFCFC6;
+  --color-base-350: #ABBFB3;
+  --color-base-400: #96B0A1;
+  --color-base-450: #82A18F;
+  --color-base-500: #637E6E;
+  --color-base-550: #5A7466;
+  --color-base-600: #556D5F;
+  --color-base-650: #4A5E52;
+  --color-base-700: #3F5046;
+  --color-base-750: #35433B;
+  --color-base-800: #2C3831;
+  --color-base-850: #242E28;
+  --color-base-900: #1D2520;
+  --color-base-950: #181E1A;
+  --color-base-1000: #131815;
+
+  // Success (save confirmations, green badges) → sage
+  --color-success-50: #F1F6F2;
+  --color-success-100: #E3ECE5;
+  --color-success-150: #DCE6DE;
+  --color-success-200: #C8D8CC;
+  --color-success-250: #B5C9BA;
+  --color-success-300: #A2BAA8;
+  --color-success-350: #8FAB97;
+  --color-success-400: #7C9C86;
+  --color-success-450: #6A8C75;
+  --color-success-500: #5A7C66;
+  --color-success-550: #4F6B5A;
+  --color-success-600: #465F50;
+  --color-success-650: #3E5647;
+  --color-success-700: #364B3E;
+  --color-success-750: #2F4136;
+  --color-success-800: #28382E;
+  --color-success-850: #212F27;
+  --color-success-900: #1B271F;
+  --color-success-950: #152019;
+}
