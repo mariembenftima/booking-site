@@ -9,6 +9,8 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Services } from './collections/Services'
 import { Resources } from './collections/Resources'
+import { SiteSettings } from './globals/SiteSettings'
+import { BusinessHours } from './globals/BusinessHours'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,6 +23,7 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, Services, Resources],
+  globals: [SiteSettings, BusinessHours],
   editor: lexicalEditor(),
 
   // Content the owner edits can exist in both languages

@@ -91,8 +91,14 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('fr' | 'en') | ('fr' | 'en')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'site-settings': SiteSetting;
+    'business-hours': BusinessHour;
+  };
+  globalsSelect: {
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    'business-hours': BusinessHoursSelect<false> | BusinessHoursSelect<true>;
+  };
   locale: 'fr' | 'en';
   widgets: {
     collections: CollectionsWidget;
@@ -413,6 +419,95 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  businessName: string;
+  tagline?: string | null;
+  ownerName?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "business-hours".
+ */
+export interface BusinessHour {
+  id: number;
+  /**
+   * A booking can start every X minutes (30 → 9:00, 9:30, 10:00…).
+   */
+  slotIntervalMinutes: number;
+  /**
+   * One row per opening period. Days with no row are closed. Two rows on the same day = a lunch break.
+   */
+  weeklyHours?:
+    | {
+        weekday: '1' | '2' | '3' | '4' | '5' | '6' | '7';
+        opens: string;
+        closes: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Holidays and exceptional closures.
+   */
+  closedDates?:
+    | {
+        date: string;
+        reason?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  businessName?: T;
+  tagline?: T;
+  ownerName?: T;
+  phone?: T;
+  email?: T;
+  address?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "business-hours_select".
+ */
+export interface BusinessHoursSelect<T extends boolean = true> {
+  slotIntervalMinutes?: T;
+  weeklyHours?:
+    | T
+    | {
+        weekday?: T;
+        opens?: T;
+        closes?: T;
+        id?: T;
+      };
+  closedDates?:
+    | T
+    | {
+        date?: T;
+        reason?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

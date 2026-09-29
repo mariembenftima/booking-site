@@ -2,6 +2,8 @@ import * as migration_20260929_220047_initial from './20260929_220047_initial';
 import * as migration_20260929_222711_localization from './20260929_222711_localization';
 import * as migration_20260929_224409_services from './20260929_224409_services';
 import * as migration_20260929_224926_services from './20260929_224926_services';
+import * as migration_20260929_225805_services from './20260929_225805_services';
+import * as migration_20260929_225824_globals from './20260929_225824_globals';
 
 export const migrations = [
   {
@@ -22,6 +24,16 @@ export const migrations = [
   {
     up: migration_20260929_224926_services.up,
     down: migration_20260929_224926_services.down,
-    name: '20260929_224926_services'
+    name: '20260929_224926_services',
+  },
+  {
+    up: migration_20260929_225805_services.up,
+    down: migration_20260929_225805_services.down,
+    name: '20260929_225805_services',
+  },
+  {
+    up: migration_20260929_225824_globals.up,
+    down: migration_20260929_225824_globals.down,
+    name: '20260929_225824_globals'
   },
 ];
