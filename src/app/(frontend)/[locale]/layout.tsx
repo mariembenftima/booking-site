@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { Geist, Cormorant_Garamond } from 'next/font/google'
 import { routing } from '@/i18n/routing'
 import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
 import '../styles.css'
 
 const geist = Geist({
@@ -28,10 +29,11 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={`${geist.variable} ${cormorant.variable}`}>
-      <body>
+      <body className="flex min-h-screen flex-col">
         <NextIntlClientProvider>
           <Header />
-          {children}
+          <div className="flex-1">{children}</div>
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>

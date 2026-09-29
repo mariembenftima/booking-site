@@ -38,5 +38,10 @@
     "closed": "Closed",
     "ctaTitle": "Ready for a moment of calm?",
     "cta": "Book an appointment"
+  },
+  "Footer": {
+    "tagline": "Beauty & wellness, by appointment.",
+    "explore": "Explore",
+    "rights": "© {year} Maison Sauge. All rights reserved."
   }
 }

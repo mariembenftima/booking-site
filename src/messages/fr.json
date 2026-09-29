@@ -38,5 +38,10 @@
     "closed": "Fermé",
     "ctaTitle": "Envie d’un moment de calme ?",
     "cta": "Prendre rendez-vous"
+  },
+  "Footer": {
+    "tagline": "Beauté & bien-être, sur rendez-vous.",
+    "explore": "Explorer",
+    "rights": "© {year} Maison Sauge. Tous droits réservés."
   }
 }
