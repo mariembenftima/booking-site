@@ -17,5 +17,17 @@
     "duration": "{minutes} min",
     "price": "{price} DT",
     "book": "Book this treatment"
+  },
+  "Contact": {
+    "eyebrow": "Find us",
+    "title": "Come and visit us",
+    "subtitle": "A question before your appointment? Call or write to us, we’re happy to help.",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "hours": "Opening hours",
+    "closed": "Closed",
+    "ctaTitle": "Ready for a moment of calm?",
+    "cta": "Book an appointment"
   }
 }

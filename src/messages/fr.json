@@ -17,5 +17,17 @@
     "duration": "{minutes} min",
     "price": "{price} DT",
     "book": "Réserver ce soin"
+  },
+  "Contact": {
+    "eyebrow": "Nous trouver",
+    "title": "Venez nous rendre visite",
+    "subtitle": "Une question avant votre rendez-vous ? Appelez-nous ou écrivez-nous, nous répondons avec plaisir.",
+    "address": "Adresse",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "hours": "Horaires",
+    "closed": "Fermé",
+    "ctaTitle": "Envie d’un moment de calme ?",
+    "cta": "Prendre rendez-vous"
   }
 }
