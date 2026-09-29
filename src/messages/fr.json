@@ -1,5 +1,13 @@
 {
+  "Nav": {
+    "home": "Accueil",
+    "services": "Services",
+    "contact": "Contact",
+    "book": "Réserver"
+  },
   "Home": {
-    "title": "Bienvenue"
+    "title": "Bienvenue",
+    "subtitle": "Réservez votre rendez-vous en ligne, en quelques clics.",
+    "cta": "Prendre rendez-vous"
   }
 }

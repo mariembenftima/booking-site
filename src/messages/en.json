@@ -1,5 +1,13 @@
 {
+  "Nav": {
+    "home": "Home",
+    "services": "Services",
+    "contact": "Contact",
+    "book": "Book"
+  },
   "Home": {
-    "title": "Welcome"
+    "title": "Welcome",
+    "subtitle": "Book your appointment online in just a few clicks.",
+    "cta": "Book an appointment"
   }
 }
