@@ -20,6 +20,17 @@ export default buildConfig({
   },
   collections: [Users, Media],
   editor: lexicalEditor(),
+
+  // Content the owner edits can exist in both languages
+  localization: {
+    locales: [
+      { label: 'Français', code: 'fr' },
+      { label: 'English', code: 'en' },
+    ],
+    defaultLocale: 'fr',
+    fallback: true, // if an English text is missing, show the French one
+  },
+
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
