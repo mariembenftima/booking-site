@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     media: Media;
     services: Service;
+    resources: Resource;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +81,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
+    resources: ResourcesSelect<false> | ResourcesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -193,6 +195,33 @@ export interface Service {
   createdAt: string;
 }
 /**
+ * Who or what a booking is with: a staff member, a court, a room…
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources".
+ */
+export interface Resource {
+  id: number;
+  kind: 'person' | 'place';
+  name: string;
+  /**
+   * Short subtitle, e.g. "Esthéticienne" / "Beautician" or "Terrain couvert" / "Indoor court".
+   */
+  role?: string | null;
+  bio?: string | null;
+  photo?: (number | null) | Media;
+  /**
+   * Which services can be booked with this resource.
+   */
+  services?: (number | Service)[] | null;
+  /**
+   * Uncheck to hide and stop bookings (e.g. holidays, maintenance).
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -227,6 +256,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'services';
         value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'resources';
+        value: number | Resource;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -322,6 +355,21 @@ export interface ServicesSelect<T extends boolean = true> {
   durationMinutes?: T;
   price?: T;
   image?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "resources_select".
+ */
+export interface ResourcesSelect<T extends boolean = true> {
+  kind?: T;
+  name?: T;
+  role?: T;
+  bio?: T;
+  photo?: T;
+  services?: T;
   active?: T;
   updatedAt?: T;
   createdAt?: T;
