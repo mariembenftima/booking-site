@@ -6,9 +6,18 @@
     "book": "Réserver"
   },
   "Home": {
-    "title": "Bienvenue",
-    "subtitle": "Réservez votre rendez-vous en ligne, en quelques clics.",
-    "cta": "Prendre rendez-vous"
+    "eyebrow": "Beauté & bien-être",
+    "title": "Prenez le temps.",
+    "subtitle": "Soins du visage, massages et hammam dans un lieu calme, pensé pour vous. Réservez en ligne en moins d’une minute.",
+    "cta": "Prendre rendez-vous",
+    "secondary": "Découvrir nos soins",
+    "whyTitle": "Un moment rien que pour vous",
+    "calmTitle": "Un lieu apaisant",
+    "calmText": "Lumière douce, musique discrète : ici, rien ne presse.",
+    "naturalTitle": "Des produits naturels",
+    "naturalText": "Huiles, argiles et savon noir choisis pour leur douceur.",
+    "onlineTitle": "Réservation en ligne",
+    "onlineText": "Choisissez votre soin et votre créneau, 24h/24, en quelques clics."
   },
   "Services": {
     "eyebrow": "Nos soins",

@@ -6,9 +6,18 @@
     "book": "Book"
   },
   "Home": {
-    "title": "Welcome",
-    "subtitle": "Book your appointment online in just a few clicks.",
-    "cta": "Book an appointment"
+    "eyebrow": "Beauty & wellness",
+    "title": "Take your time.",
+    "subtitle": "Facials, massages and hammam in a calm place designed for you. Book online in under a minute.",
+    "cta": "Book an appointment",
+    "secondary": "Explore our treatments",
+    "whyTitle": "A moment just for you",
+    "calmTitle": "A soothing place",
+    "calmText": "Soft light, quiet music: here, nothing is rushed.",
+    "naturalTitle": "Natural products",
+    "naturalText": "Oils, clays and black soap chosen for their gentleness.",
+    "onlineTitle": "Online booking",
+    "onlineText": "Pick your treatment and time, 24/7, in a few clicks."
   },
   "Services": {
     "eyebrow": "Our treatments",
