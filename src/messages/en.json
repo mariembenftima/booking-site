@@ -9,5 +9,13 @@
     "title": "Welcome",
     "subtitle": "Book your appointment online in just a few clicks.",
     "cta": "Book an appointment"
+  },
+  "Services": {
+    "eyebrow": "Our treatments",
+    "title": "Treatments designed for you",
+    "subtitle": "Choose your treatment, then book the time that suits you.",
+    "duration": "{minutes} min",
+    "price": "{price} DT",
+    "book": "Book this treatment"
   }
 }

@@ -9,5 +9,13 @@
     "title": "Bienvenue",
     "subtitle": "Réservez votre rendez-vous en ligne, en quelques clics.",
     "cta": "Prendre rendez-vous"
+  },
+  "Services": {
+    "eyebrow": "Nos soins",
+    "title": "Des soins pensés pour vous",
+    "subtitle": "Choisissez votre soin, puis réservez le créneau qui vous convient.",
+    "duration": "{minutes} min",
+    "price": "{price} DT",
+    "book": "Réserver ce soin"
   }
 }
