@@ -1,39 +1,53 @@
-import { getFormatter, getTranslations } from 'next-intl/server'
+import { hasLocale } from 'next-intl'
+import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Clock, Mail, MapPin, Phone } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
+import { routing } from '@/i18n/routing'
 import { Button } from '@/components/ui/button'
 
-// Placeholder data: replaced by Payload SiteSettings + BusinessHours in Week 2
-const CONTACT = {
-  address: '12 rue des Jasmins, La Marsa, Tunis',
-  phone: '+216 71 000 000',
-  email: 'bonjour@maisonsauge.tn',
-}
-
-// weekday: 1 = Monday … 7 = Sunday. null = closed
-const HOURS: { weekday: number; open: string | null; close: string | null }[] = [
-  { weekday: 1, open: null, close: null },
-  { weekday: 2, open: '09:00', close: '19:00' },
-  { weekday: 3, open: '09:00', close: '19:00' },
-  { weekday: 4, open: '09:00', close: '19:00' },
-  { weekday: 5, open: '09:00', close: '19:00' },
-  { weekday: 6, open: '09:00', close: '19:00' },
-  { weekday: 7, open: '10:00', close: '16:00' },
-]
-
 export default async function ContactPage() {
+  const requested = await getLocale()
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
   const t = await getTranslations('Contact')
   const format = await getFormatter()
+
+  // Real data from Payload: Settings → Site settings + Business hours
+  const payload = await getPayload({ config })
+  const [settings, hours] = await Promise.all([
+    payload.findGlobal({ slug: 'site-settings', locale }),
+    payload.findGlobal({ slug: 'business-hours', locale }),
+  ])
 
   // 1 Jan 2024 was a Monday, so day N of Jan 2024 = weekday N. Gives the day name in the right language.
   const dayName = (weekday: number) =>
     format.dateTime(new Date(2024, 0, weekday), { weekday: 'long' })
 
+  // Group opening periods by weekday (two rows on one day = lunch break)
+  const week = [1, 2, 3, 4, 5, 6, 7].map((weekday) => {
+    const periods = (hours.weeklyHours ?? [])
+      .filter((row) => row.weekday === String(weekday))
+      .sort((a, b) => a.opens.localeCompare(b.opens))
+      .map((row) => `${row.opens} – ${row.closes}`)
+    return { weekday, periods }
+  })
+
   const details = [
-    { icon: MapPin, label: t('address'), value: CONTACT.address, href: null },
-    { icon: Phone, label: t('phone'), value: CONTACT.phone, href: `tel:${CONTACT.phone.replace(/\s/g, '')}` },
-    { icon: Mail, label: t('email'), value: CONTACT.email, href: `mailto:${CONTACT.email}` },
-  ]
+    settings.address && { icon: MapPin, label: t('address'), value: settings.address, href: null },
+    settings.phone && {
+      icon: Phone,
+      label: t('phone'),
+      value: settings.phone,
+      href: `tel:${settings.phone.replace(/\s/g, '')}`,
+    },
+    settings.email && { icon: Mail, label: t('email'), value: settings.email, href: `mailto:${settings.email}` },
+  ].filter((item) => Boolean(item)) as {
+    icon: typeof MapPin
+    label: string
+    value: string
+    href: string | null
+  }[]
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-16">
@@ -61,7 +75,7 @@ export default async function ContactPage() {
                     {value}
                   </a>
                 ) : (
-                  <p className="font-medium">{value}</p>
+                  <p className="whitespace-pre-line font-medium">{value}</p>
                 )}
               </div>
             </li>
@@ -75,11 +89,11 @@ export default async function ContactPage() {
             {t('hours')}
           </h2>
           <dl className="mt-4 divide-y divide-border">
-            {HOURS.map((day) => (
-              <div key={day.weekday} className="flex justify-between py-3 text-sm">
+            {week.map((day) => (
+              <div key={day.weekday} className="flex justify-between gap-4 py-3 text-sm">
                 <dt className="capitalize">{dayName(day.weekday)}</dt>
-                <dd className={day.open ? 'font-medium' : 'text-muted-foreground'}>
-                  {day.open ? `${day.open} – ${day.close}` : t('closed')}
+                <dd className={day.periods.length ? 'text-right font-medium' : 'text-muted-foreground'}>
+                  {day.periods.length ? day.periods.join(', ') : t('closed')}
                 </dd>
               </div>
             ))}

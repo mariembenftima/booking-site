@@ -1,14 +1,10 @@
-import { getTranslations } from 'next-intl/server'
+import { hasLocale } from 'next-intl'
+import { getLocale, getTranslations } from 'next-intl/server'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 import { Mail, Phone } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
-
-// Placeholder data: replaced by Payload SiteSettings in Week 2
-const BUSINESS = {
-  name: 'Maison Sauge',
-  owner: 'Leïla Mansour',
-  phone: '+216 71 000 000',
-  email: 'bonjour@maisonsauge.tn',
-}
+import { routing } from '@/i18n/routing'
 
 const LEAF = 'M20 180C20 90 90 20 180 20C180 110 110 180 20 180Z'
 
@@ -37,9 +33,18 @@ const linkStyle =
 const labelStyle = 'text-[13px] font-medium uppercase tracking-[0.08em] text-background/60'
 
 export async function Footer() {
+  const requested = await getLocale()
+  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale
   const t = await getTranslations('Footer')
   const nav = await getTranslations('Nav')
   const year = new Date().getFullYear()
+
+  // Real data from Payload: Settings → Site settings
+  const payload = await getPayload({ config })
+  const settings = await payload.findGlobal({ slug: 'site-settings', locale })
+
+  const name = settings.businessName ?? ''
+  const tagline = settings.tagline || t('tagline')
 
   const links = [
     { href: '/', label: nav('home') },
@@ -55,7 +60,7 @@ export async function Footer() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 -translate-y-[0.22em] select-none whitespace-nowrap text-center font-heading text-[clamp(4rem,14vw,12rem)] font-semibold leading-none text-background/[0.07]"
       >
-        {BUSINESS.name}
+        {name}
       </p>
 
       <DecorativeLeaves />
@@ -63,28 +68,36 @@ export async function Footer() {
       <div className="relative mx-auto grid max-w-6xl gap-10 px-6 pb-12 pt-24 md:grid-cols-3 md:pt-32">
         {/* Brand */}
         <div>
-          <p className="font-heading text-3xl font-semibold">{BUSINESS.name}</p>
-          <p className="mt-2 max-w-xs text-background/70">{t('tagline')}</p>
+          <p className="font-heading text-3xl font-semibold">{name}</p>
+          <p className="mt-2 max-w-xs text-background/70">{tagline}</p>
         </div>
 
         {/* Contact */}
         <div>
           <p className={labelStyle}>{nav('contact')}</p>
-          <p className="mt-4 font-medium">{BUSINESS.owner}</p>
-          <p className="text-sm text-background/60">{t('founder')}</p>
+          {settings.ownerName && (
+            <>
+              <p className="mt-4 font-medium">{settings.ownerName}</p>
+              <p className="text-sm text-background/60">{t('founder')}</p>
+            </>
+          )}
           <ul className="mt-4 flex flex-col items-start gap-2">
-            <li className="flex items-center gap-2">
-              <Phone className="size-4 text-background/60" strokeWidth={1.5} aria-hidden="true" />
-              <a href={`tel:${BUSINESS.phone.replace(/\s/g, '')}`} className={linkStyle}>
-                {BUSINESS.phone}
-              </a>
-            </li>
-            <li className="flex items-center gap-2">
-              <Mail className="size-4 text-background/60" strokeWidth={1.5} aria-hidden="true" />
-              <a href={`mailto:${BUSINESS.email}`} className={linkStyle}>
-                {BUSINESS.email}
-              </a>
-            </li>
+            {settings.phone && (
+              <li className="flex items-center gap-2">
+                <Phone className="size-4 text-background/60" strokeWidth={1.5} aria-hidden="true" />
+                <a href={`tel:${settings.phone.replace(/\s/g, '')}`} className={linkStyle}>
+                  {settings.phone}
+                </a>
+              </li>
+            )}
+            {settings.email && (
+              <li className="flex items-center gap-2">
+                <Mail className="size-4 text-background/60" strokeWidth={1.5} aria-hidden="true" />
+                <a href={`mailto:${settings.email}`} className={linkStyle}>
+                  {settings.email}
+                </a>
+              </li>
+            )}
           </ul>
         </div>
 
