@@ -19,13 +19,14 @@
     "onlineTitle": "Réservation en ligne",
     "onlineText": "Choisissez votre soin et votre créneau, 24h/24, en quelques clics."
   },
-  "Services": {
+    "Services": {
     "eyebrow": "Nos soins",
     "title": "Des soins pensés pour vous",
     "subtitle": "Choisissez votre soin, puis réservez le créneau qui vous convient.",
     "duration": "{minutes} min",
     "price": "{price} DT",
-    "book": "Réserver ce soin"
+    "book": "Réserver ce soin",
+    "empty": "Aucun soin pour le moment. Revenez bientôt !"
   },
   "Contact": {
     "eyebrow": "Nous trouver",

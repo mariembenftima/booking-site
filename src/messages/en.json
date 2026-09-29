@@ -19,13 +19,14 @@
     "onlineTitle": "Online booking",
     "onlineText": "Pick your treatment and time, 24/7, in a few clicks."
   },
-  "Services": {
+    "Services": {
     "eyebrow": "Our treatments",
     "title": "Treatments designed for you",
     "subtitle": "Choose your treatment, then book the time that suits you.",
     "duration": "{minutes} min",
     "price": "{price} DT",
-    "book": "Book this treatment"
+    "book": "Book this treatment",
+    "empty": "No treatments yet. Come back soon!"
   },
   "Contact": {
     "eyebrow": "Find us",
