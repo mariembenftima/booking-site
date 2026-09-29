@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 import { Button } from '@/components/ui/button'
 
 import config from '@/payload.config'
-import './styles.css'
+import '../styles.css'
 
 export default async function HomePage() {
   const headers = await getHeaders()
