@@ -21,6 +21,15 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: ' · Admin',
+    },
+    components: {
+      graphics: {
+        Logo: '/components/admin/Logo',
+        Icon: '/components/admin/Icon',
+      },
+    },
   },
   collections: [Users, Media, Services, Resources],
   globals: [SiteSettings, BusinessHours],
