@@ -5,8 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-cormorant), Georgia, serif;
+
+  --color-clay: var(--clay);
+  --color-sage-strong: var(--sage-strong);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -47,13 +51,11 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Maison Sauge — light */
 :root {
   --radius: 0.75rem;
-  /* radius-md */
   --background: #FBF8F4;
-  /* surface */
   --foreground: #2A2420;
-  /* ink */
   --card: #FFFFFF;
   --card-foreground: #2A2420;
   --popover: #FFFFFF;
@@ -70,8 +72,27 @@
   --border: #E4DBD1;
   --input: #8C7F74;
   --ring: #4F6B5A;
+
+  --clay: #B8735A;
+  --sage-strong: #3E5647;
+
+  --chart-1: #4F6B5A;
+  --chart-2: #B8735A;
+  --chart-3: #8C7F74;
+  --chart-4: #DCE6DE;
+  --chart-5: #3E5647;
+
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #2A2420;
+  --sidebar-primary: #4F6B5A;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #DCE6DE;
+  --sidebar-accent-foreground: #2A2420;
+  --sidebar-border: #E4DBD1;
+  --sidebar-ring: #4F6B5A;
 }
 
+/* Maison Sauge — dark */
 .dark {
   --background: #1C1916;
   --foreground: #F3ECE3;
@@ -91,6 +112,24 @@
   --border: #3A332C;
   --input: #82766B;
   --ring: #8FB39C;
+
+  --clay: #D39A82;
+  --sage-strong: #A9C8B4;
+
+  --chart-1: #8FB39C;
+  --chart-2: #D39A82;
+  --chart-3: #82766B;
+  --chart-4: #2E3B33;
+  --chart-5: #A9C8B4;
+
+  --sidebar: #26221E;
+  --sidebar-foreground: #F3ECE3;
+  --sidebar-primary: #8FB39C;
+  --sidebar-primary-foreground: #1C1916;
+  --sidebar-accent: #2E3B33;
+  --sidebar-accent-foreground: #F3ECE3;
+  --sidebar-border: #3A332C;
+  --sidebar-ring: #8FB39C;
 }
 
 @layer base {
@@ -98,11 +137,17 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    @apply font-sans;
+  }
+
   body {
     @apply bg-background text-foreground;
   }
 
-  html {
-    @apply font-sans;
+  /* Charter: serif for page and section titles only */
+  h1,
+  h2 {
+    @apply font-heading font-semibold;
   }
 }
