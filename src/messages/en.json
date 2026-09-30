@@ -46,13 +46,14 @@
     "founder": "Founder",
     "rights": "© {year} {name}. All rights reserved."
   },
-  "Booking": {
+    "Booking": {
     "eyebrow": "Booking",
     "title": "Book your moment",
     "subtitle": "Choose a treatment, a date, then the time that suits you.",
     "step1": "1. Treatment",
     "step2": "2. Date",
     "step3": "3. Time",
+    "step4": "4. Your details",
     "duration": "{minutes} min",
     "price": "{price} DT",
     "pickServiceFirst": "Choose a treatment first.",
@@ -60,7 +61,18 @@
     "loading": "Looking for free times…",
     "noSlots": "No free times left on this day. Try another date.",
     "summary": "Your choice",
-    "continue": "Continue",
-    "continueSoon": "Next step: your details"
+    "name": "Full name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "confirm": "Confirm appointment",
+    "sending": "Confirming…",
+    "errorName": "Please enter your name (at least 2 characters).",
+    "errorEmail": "Please enter a valid email address.",
+    "errorPhone": "This number is too long.",
+    "slotTaken": "This slot was just taken. Please choose another one.",
+    "errorGeneric": "Something went wrong. Please try again in a moment.",
+    "successTitle": "Your appointment is confirmed ✓",
+    "successText": "Thank you! We look forward to welcoming you.",
+    "bookAnother": "Book another treatment"
   }
 }

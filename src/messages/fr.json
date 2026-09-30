@@ -46,13 +46,14 @@
     "founder": "Fondatrice",
     "rights": "© {year} {name}. Tous droits réservés."
   },
-  "Booking": {
+    "Booking": {
     "eyebrow": "Réservation",
     "title": "Réservez votre moment",
     "subtitle": "Choisissez un soin, une date, puis l’horaire qui vous convient.",
     "step1": "1. Le soin",
     "step2": "2. La date",
     "step3": "3. L’horaire",
+    "step4": "4. Vos coordonnées",
     "duration": "{minutes} min",
     "price": "{price} DT",
     "pickServiceFirst": "Choisissez d’abord un soin.",
@@ -60,7 +61,18 @@
     "loading": "Recherche des horaires libres…",
     "noSlots": "Plus aucun horaire libre ce jour-là. Essayez une autre date.",
     "summary": "Votre choix",
-    "continue": "Continuer",
-    "continueSoon": "Prochaine étape : vos coordonnées"
+    "name": "Nom complet",
+    "email": "E-mail",
+    "phone": "Téléphone (facultatif)",
+    "confirm": "Confirmer le rendez-vous",
+    "sending": "Confirmation…",
+    "errorName": "Indiquez votre nom (2 caractères minimum).",
+    "errorEmail": "Indiquez une adresse e-mail valide.",
+    "errorPhone": "Ce numéro est trop long.",
+    "slotTaken": "Ce créneau vient d’être réservé. Choisissez-en un autre.",
+    "errorGeneric": "Une erreur est survenue. Réessayez dans un instant.",
+    "successTitle": "Votre rendez-vous est confirmé ✓",
+    "successText": "Merci ! Nous avons hâte de vous accueillir.",
+    "bookAnother": "Réserver un autre soin"
   }
 }

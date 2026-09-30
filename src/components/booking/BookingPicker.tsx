@@ -5,9 +5,15 @@ import { useFormatter, useLocale, useTranslations } from 'next-intl'
 import { enUS, fr } from 'react-day-picker/locale'
 import { Calendar } from '@/components/ui/calendar'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 import type { Slot } from '@/lib/availability'
-import { fetchSlots } from '@/app/(frontend)/[locale]/booking/actions'
+import {
+  createBooking,
+  fetchSlots,
+  type BookingField,
+} from '@/app/(frontend)/[locale]/booking/actions'
 
 export type BookingService = {
   slug: string
@@ -39,14 +45,23 @@ export function BookingPicker({
   const format = useFormatter()
   const locale = useLocale()
 
+  // Steps 1–3
   const [serviceSlug, setServiceSlug] = useState<string>(
     () => services.find((s) => s.slug === initialService)?.slug ?? '',
   )
   const [date, setDate] = useState<Date | undefined>()
   const [slots, setSlots] = useState<Slot[] | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const [isLoading, startLoading] = useTransition()
   const requestId = useRef(0) // ignore answers from older requests
+
+  // Step 4
+  const [form, setForm] = useState({ name: '', email: '', phone: '', website: '' })
+  const [fieldErrors, setFieldErrors] = useState<BookingField[]>([])
+  const [slotTaken, setSlotTaken] = useState(false)
+  const [genericError, setGenericError] = useState(false)
+  const [isSubmitting, startSubmitting] = useTransition()
+  const [confirmed, setConfirmed] = useState<{ time: string | null } | null>(null)
 
   const service = services.find((s) => s.slug === serviceSlug)
   const selectedSlot = slots?.find((s) => s.start === selected)
@@ -58,7 +73,7 @@ export function BookingPicker({
       return
     }
     const id = ++requestId.current
-    startTransition(async () => {
+    startLoading(async () => {
       const result = await fetchSlots(slug, toDateStr(day))
       if (id === requestId.current) setSlots(result)
     })
@@ -66,12 +81,20 @@ export function BookingPicker({
 
   const chooseService = (slug: string) => {
     setServiceSlug(slug)
+    setSlotTaken(false)
     load(slug, date)
   }
 
   const chooseDate = (day: Date | undefined) => {
     setDate(day)
+    setSlotTaken(false)
     load(serviceSlug, day)
+  }
+
+  const chooseSlot = (start: string) => {
+    setSelected(start)
+    setSlotTaken(false)
+    setGenericError(false)
   }
 
   // Past days, closed weekdays and holidays can't be picked
@@ -93,6 +116,57 @@ export function BookingPicker({
 
   const lastMonth = new Date()
   lastMonth.setMonth(lastMonth.getMonth() + 3)
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!service || !selectedSlot) return
+    setFieldErrors([])
+    setGenericError(false)
+
+    startSubmitting(async () => {
+      const result = await createBooking({
+        serviceSlug: service.slug,
+        start: selectedSlot.start,
+        locale,
+        ...form,
+      })
+
+      if (result.ok) {
+        setConfirmed({ time: result.time ?? selectedSlot.time })
+      } else if (result.error === 'slotTaken') {
+        setSlotTaken(true)
+        load(serviceSlug, date) // refresh: the taken time disappears
+      } else if (result.error === 'invalid') {
+        setFieldErrors(result.fields ?? [])
+      } else {
+        setGenericError(true)
+      }
+    })
+  }
+
+  function startOver() {
+    setConfirmed(null)
+    setForm({ name: '', email: '', phone: '', website: '' })
+    load(serviceSlug, date)
+  }
+
+  // ✓ Confirmation screen
+  if (confirmed) {
+    return (
+      <section className="mt-12 flex flex-col items-start gap-4 rounded-[20px] bg-accent p-8" aria-live="polite">
+        <h2 className="text-3xl">{t('successTitle')}</h2>
+        <p className="text-lg font-semibold">
+          {service?.name} · <span className="capitalize">{dateLabel}</span> · {confirmed.time}
+        </p>
+        <p className="text-muted-foreground">{t('successText')}</p>
+        <Button variant="outline" onClick={startOver}>
+          {t('bookAnother')}
+        </Button>
+      </section>
+    )
+  }
+
+  const errorFor = (field: BookingField) => fieldErrors.includes(field)
 
   return (
     <div className="mt-12 flex flex-col gap-10">
@@ -145,11 +219,12 @@ export function BookingPicker({
         <section className="rounded-lg border border-border bg-card p-6">
           <h2 className={labelStyle}>{t('step3')}</h2>
           <div className="mt-4" aria-live="polite">
+            {slotTaken && <p className="mb-4 text-sm font-medium text-destructive">{t('slotTaken')}</p>}
             {!service ? (
               <p className="text-muted-foreground">{t('pickServiceFirst')}</p>
             ) : !date ? (
               <p className="text-muted-foreground">{t('pickDateFirst')}</p>
-            ) : isPending ? (
+            ) : isLoading ? (
               <p className="text-muted-foreground">{t('loading')}</p>
             ) : slots && slots.length === 0 ? (
               <p className="text-muted-foreground">{t('noSlots')}</p>
@@ -161,7 +236,7 @@ export function BookingPicker({
                     <li key={slot.start}>
                       <button
                         type="button"
-                        onClick={() => setSelected(slot.start)}
+                        onClick={() => chooseSlot(slot.start)}
                         aria-pressed={active}
                         className={cn(
                           'rounded-full border px-4 py-2 text-sm font-medium transition-colors',
@@ -179,21 +254,77 @@ export function BookingPicker({
         </section>
       </div>
 
-      {/* Summary */}
+      {/* 4. Details + confirm */}
       {service && date && selectedSlot && (
-        <section className="flex flex-col gap-4 rounded-[20px] bg-accent p-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className={labelStyle}>{t('summary')}</p>
-            <p className="mt-1 text-lg font-semibold">
-              {service.name} · <span className="capitalize">{dateLabel}</span> · {selectedSlot.time}
-            </p>
-          </div>
-          <div className="flex flex-col items-start gap-1 md:items-end">
-            <Button size="lg" disabled>
-              {t('continue')}
-            </Button>
-            <span className="text-xs text-muted-foreground">{t('continueSoon')}</span>
-          </div>
+        <section className="rounded-[20px] bg-accent p-6 md:p-8">
+          <p className={labelStyle}>{t('summary')}</p>
+          <p className="mt-1 text-lg font-semibold">
+            {service.name} · <span className="capitalize">{dateLabel}</span> · {selectedSlot.time}
+          </p>
+
+          <form onSubmit={submit} noValidate className="mt-6 grid gap-4 md:grid-cols-3">
+            <h2 className={cn(labelStyle, 'md:col-span-3')}>{t('step4')}</h2>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="name">{t('name')}</Label>
+              <Input
+                id="name"
+                autoComplete="name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                aria-invalid={errorFor('name')}
+                className="bg-card"
+              />
+              {errorFor('name') && <p className="text-sm text-destructive">{t('errorName')}</p>}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="email">{t('email')}</Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                aria-invalid={errorFor('email')}
+                className="bg-card"
+              />
+              {errorFor('email') && <p className="text-sm text-destructive">{t('errorEmail')}</p>}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="phone">{t('phone')}</Label>
+              <Input
+                id="phone"
+                type="tel"
+                autoComplete="tel"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                aria-invalid={errorFor('phone')}
+                className="bg-card"
+              />
+              {errorFor('phone') && <p className="text-sm text-destructive">{t('errorPhone')}</p>}
+            </div>
+
+            {/* Honeypot: hidden from humans and screen readers, bots fill it */}
+            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+              <label htmlFor="website">Website</label>
+              <input
+                id="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={form.website}
+                onChange={(e) => setForm({ ...form, website: e.target.value })}
+              />
+            </div>
+
+            <div className="flex flex-col items-start gap-2 md:col-span-3">
+              {genericError && <p className="text-sm text-destructive">{t('errorGeneric')}</p>}
+              <Button type="submit" size="lg" disabled={isSubmitting}>
+                {isSubmitting ? t('sending') : t('confirm')}
+              </Button>
+            </div>
+          </form>
         </section>
       )}
     </div>
