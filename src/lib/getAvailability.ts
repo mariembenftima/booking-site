@@ -1,9 +1,12 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { computeSlots, type ID, type Slot } from './availability'
-import { BUSINESS_TIMEZONE, weekdayOf, zonedToUtc } from './time'
+import { BUSINESS_TIMEZONE, todayInZone, weekdayOf, zonedToUtc } from './time'
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+
+// The calendar shows 3 whole months ahead, so up to ~4 months of days can be clicked
+export const MAX_DAYS_AHEAD = 124
 
 const idOf = (value: unknown): ID => {
   if (value && typeof value === 'object' && 'id' in value) return (value as { id: ID }).id
@@ -14,14 +17,19 @@ const idOf = (value: unknown): ID => {
 const dateInZone = (value: string | Date) =>
   new Intl.DateTimeFormat('en-CA', { timeZone: BUSINESS_TIMEZONE }).format(new Date(value))
 
-/** The day after a "YYYY-MM-DD" date */
-const nextDay = (date: string) => {
+/** "YYYY-MM-DD" + n days */
+const addDays = (date: string, n: number) => {
   const [y, m, d] = date.split('-').map(Number)
-  return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10)
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10)
 }
 
 export async function getAvailability(serviceSlug: string, date: string): Promise<Slot[]> {
   if (!DATE_PATTERN.test(date)) return []
+
+  // Booking window: no past days, nothing too far ahead (also protects the server from silly requests)
+  const today = todayInZone()
+  if (date < today || date > addDays(today, MAX_DAYS_AHEAD)) return []
+
   const payload = await getPayload({ config })
 
   // 1. The service (must exist and be active)
@@ -49,7 +57,7 @@ export async function getAvailability(serviceSlug: string, date: string): Promis
 
   // 3. Existing confirmed bookings of those resources that touch this day
   const dayStart = zonedToUtc(date, '00:00')
-  const dayEnd = zonedToUtc(nextDay(date), '00:00')
+  const dayEnd = zonedToUtc(addDays(date, 1), '00:00')
   const bookings = await payload.find({
     collection: 'bookings',
     where: {

@@ -22,7 +22,7 @@ export default async function ContactPage() {
 
   // 1 Jan 2024 was a Monday, so day N of Jan 2024 = weekday N. Gives the day name in the right language.
   const dayName = (weekday: number) =>
-    format.dateTime(new Date(2024, 0, weekday), { weekday: 'long' })
+    format.dateTime(new Date(Date.UTC(2024, 0, weekday, 12)), { weekday: 'long', timeZone: 'UTC' })
 
   // Group opening periods by weekday (two rows on one day = lunch break)
   const week = [1, 2, 3, 4, 5, 6, 7].map((weekday) => {
