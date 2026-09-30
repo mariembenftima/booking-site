@@ -73,6 +73,7 @@
     "errorGeneric": "Une erreur est survenue. Réessayez dans un instant.",
     "successTitle": "Votre rendez-vous est confirmé ✓",
     "successText": "Merci ! Nous avons hâte de vous accueillir.",
-    "bookAnother": "Réserver un autre soin"
+    "bookAnother": "Réserver un autre soin",
+    "alreadyBooked": "Vous avez déjà un rendez-vous à cette heure-là. Choisissez un autre horaire."
   }
 }

@@ -27,7 +27,7 @@ export type BookingField = 'name' | 'email' | 'phone'
 
 export type BookingResult =
   | { ok: true; time: string | null }
-  | { ok: false; error: 'invalid' | 'slotTaken' | 'generic'; fields?: BookingField[] }
+  | { ok: false; error: 'invalid' | 'slotTaken' | 'alreadyBooked' | 'generic'; fields?: BookingField[] }
 
 const FIELDS: BookingField[] = ['name', 'email', 'phone']
 
@@ -47,7 +47,8 @@ export async function createBooking(input: unknown): Promise<BookingResult> {
     const fields = FIELDS.filter((f) => paths.includes(f))
     return { ok: false, error: fields.length ? 'invalid' : 'generic', fields }
   }
-  const { serviceSlug, start, name, email, phone, locale } = parsed.data
+  const { serviceSlug, start, name, phone, locale } = parsed.data
+  const email = parsed.data.email.toLowerCase() // same person whatever the capitals
   const startIso = new Date(start).toISOString()
 
   try {
@@ -69,7 +70,23 @@ export async function createBooking(input: unknown): Promise<BookingResult> {
 
     const endIso = new Date(new Date(startIso).getTime() + service.durationMinutes * 60_000).toISOString()
 
-    // 3. Try each free resource. If Postgres says "taken" (someone was faster), try the next one.
+    // 3. The client can't be in two places at once: refuse overlapping bookings for the same email
+    const clash = await payload.find({
+      collection: 'bookings',
+      where: {
+        and: [
+          { customerEmail: { equals: email } },
+          { status: { equals: 'confirmed' } },
+          { startTime: { less_than: endIso } },
+          { endTime: { greater_than: startIso } },
+        ],
+      },
+      limit: 1,
+      depth: 0,
+    })
+    if (clash.totalDocs > 0) return { ok: false, error: 'alreadyBooked' }
+
+    // 4. Try each free resource. If Postgres says "taken" (someone was faster), try the next one.
     for (const resourceId of slot.resourceIds) {
       try {
         const booking = await payload.create({
@@ -88,7 +105,7 @@ export async function createBooking(input: unknown): Promise<BookingResult> {
           },
         })
 
-        // 4. Emails go out after the response: the client never waits for them
+        // 5. Emails go out after the response: the client never waits for them
         after(() => sendBookingEmails(booking.id))
 
         return { ok: true, time: timeInZone(new Date(startIso)) }

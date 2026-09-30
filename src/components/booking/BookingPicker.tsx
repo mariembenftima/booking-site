@@ -26,7 +26,10 @@ export type BookingService = {
 const toDateStr = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 
-const labelStyle = 'text-[13px] font-medium uppercase tracking-[0.08em] text-muted-foreground'
+// Charter "label" style: Geist, uppercase (font-sans overrides the serif h2 rule)
+const labelStyle = 'font-sans text-[13px] font-medium uppercase tracking-[0.08em] text-muted-foreground'
+
+type FormError = 'alreadyBooked' | 'generic' | null
 
 export function BookingPicker({
   services,
@@ -59,7 +62,7 @@ export function BookingPicker({
   const [form, setForm] = useState({ name: '', email: '', phone: '', website: '' })
   const [fieldErrors, setFieldErrors] = useState<BookingField[]>([])
   const [slotTaken, setSlotTaken] = useState(false)
-  const [genericError, setGenericError] = useState(false)
+  const [formError, setFormError] = useState<FormError>(null)
   const [isSubmitting, startSubmitting] = useTransition()
   const [confirmed, setConfirmed] = useState<{ time: string | null } | null>(null)
 
@@ -82,19 +85,21 @@ export function BookingPicker({
   const chooseService = (slug: string) => {
     setServiceSlug(slug)
     setSlotTaken(false)
+    setFormError(null)
     load(slug, date)
   }
 
   const chooseDate = (day: Date | undefined) => {
     setDate(day)
     setSlotTaken(false)
+    setFormError(null)
     load(serviceSlug, day)
   }
 
   const chooseSlot = (start: string) => {
     setSelected(start)
     setSlotTaken(false)
-    setGenericError(false)
+    setFormError(null)
   }
 
   // Past days, closed weekdays and holidays can't be picked
@@ -121,7 +126,7 @@ export function BookingPicker({
     e.preventDefault()
     if (!service || !selectedSlot) return
     setFieldErrors([])
-    setGenericError(false)
+    setFormError(null)
 
     startSubmitting(async () => {
       const result = await createBooking({
@@ -139,7 +144,7 @@ export function BookingPicker({
       } else if (result.error === 'invalid') {
         setFieldErrors(result.fields ?? [])
       } else {
-        setGenericError(true)
+        setFormError(result.error) // 'alreadyBooked' or 'generic'
       }
     })
   }
@@ -319,7 +324,11 @@ export function BookingPicker({
             </div>
 
             <div className="flex flex-col items-start gap-2 md:col-span-3">
-              {genericError && <p className="text-sm text-destructive">{t('errorGeneric')}</p>}
+              {formError && (
+                <p className="text-sm font-medium text-destructive">
+                  {formError === 'alreadyBooked' ? t('alreadyBooked') : t('errorGeneric')}
+                </p>
+              )}
               <Button type="submit" size="lg" disabled={isSubmitting}>
                 {isSubmitting ? t('sending') : t('confirm')}
               </Button>
