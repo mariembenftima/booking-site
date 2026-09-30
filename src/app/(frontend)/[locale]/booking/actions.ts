@@ -1,9 +1,11 @@
 'use server'
 
+import { after } from 'next/server'
 import { getPayload, ValidationError } from 'payload'
 import config from '@payload-config'
 import { z } from 'zod'
 import { getAvailability } from '@/lib/getAvailability'
+import { sendBookingEmails } from '@/lib/sendBookingEmails'
 import { BUSINESS_TIMEZONE, timeInZone } from '@/lib/time'
 
 // Called from the booking page to get free times for a service + date
@@ -70,7 +72,7 @@ export async function createBooking(input: unknown): Promise<BookingResult> {
     // 3. Try each free resource. If Postgres says "taken" (someone was faster), try the next one.
     for (const resourceId of slot.resourceIds) {
       try {
-        await payload.create({
+        const booking = await payload.create({
           collection: 'bookings',
           data: {
             service: service.id,
@@ -85,6 +87,10 @@ export async function createBooking(input: unknown): Promise<BookingResult> {
             status: 'confirmed',
           },
         })
+
+        // 4. Emails go out after the response: the client never waits for them
+        after(() => sendBookingEmails(booking.id))
+
         return { ok: true, time: timeInZone(new Date(startIso)) }
       } catch (err) {
         if (isSlotTaken(err)) continue
