@@ -4,6 +4,7 @@ import * as migration_20260929_224409_services from './20260929_224409_services'
 import * as migration_20260929_224926_services from './20260929_224926_services';
 import * as migration_20260929_225805_services from './20260929_225805_services';
 import * as migration_20260929_225824_globals from './20260929_225824_globals';
+import * as migration_20260930_010424_blob_object_key from './20260930_010424_blob_object_key';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20260929_225824_globals.up,
     down: migration_20260929_225824_globals.down,
-    name: '20260929_225824_globals'
+    name: '20260929_225824_globals',
+  },
+  {
+    up: migration_20260930_010424_blob_object_key.up,
+    down: migration_20260930_010424_blob_object_key.down,
+    name: '20260930_010424_blob_object_key'
   },
 ];
