@@ -74,6 +74,8 @@
     "successTitle": "Votre rendez-vous est confirmé ✓",
     "successText": "Merci ! Nous avons hâte de vous accueillir.",
     "bookAnother": "Réserver un autre soin",
-    "alreadyBooked": "Vous avez déjà un rendez-vous à cette heure-là. Choisissez un autre horaire."
+    "alreadyBooked": "Vous avez déjà un rendez-vous à cette heure-là. Choisissez un autre horaire.",
+    "nextAvailable": "Prochaine disponibilité : {date} →",
+    "noAvailability": "Aucune disponibilité dans les 60 prochains jours."
   }
 }

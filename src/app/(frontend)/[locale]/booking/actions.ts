@@ -12,7 +12,16 @@ import { BUSINESS_TIMEZONE, timeInZone } from '@/lib/time'
 export async function fetchSlots(serviceSlug: string, date: string) {
   return getAvailability(serviceSlug, date)
 }
-
+/** The first day after `afterDate` (up to 60 days) that still has a free slot for this service */
+export async function findNextAvailable(serviceSlug: string, afterDate: string): Promise<string | null> {
+  const [y, m, d] = afterDate.split('-').map(Number)
+  for (let i = 1; i <= 60; i++) {
+    const day = new Date(Date.UTC(y, m - 1, d + i)).toISOString().slice(0, 10)
+    const slots = await getAvailability(serviceSlug, day)
+    if (slots.length > 0) return day
+  }
+  return null
+}
 const BookingInput = z.object({
   serviceSlug: z.string().min(1),
   start: z.iso.datetime(),

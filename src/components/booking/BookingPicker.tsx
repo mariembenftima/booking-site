@@ -12,6 +12,7 @@ import type { Slot } from '@/lib/availability'
 import {
   createBooking,
   fetchSlots,
+  findNextAvailable,
   type BookingField,
 } from '@/app/(frontend)/[locale]/booking/actions'
 
@@ -25,6 +26,12 @@ export type BookingService = {
 // A calendar day picked by the visitor → "YYYY-MM-DD"
 const toDateStr = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+// "YYYY-MM-DD" → a local calendar day (for the calendar component)
+const fromDateStr = (str: string) => {
+  const [y, m, d] = str.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
 
 // Charter "label" style: Geist, uppercase (font-sans overrides the serif h2 rule)
 const labelStyle = 'font-sans text-[13px] font-medium uppercase tracking-[0.08em] text-muted-foreground'
@@ -53,7 +60,9 @@ export function BookingPicker({
     () => services.find((s) => s.slug === initialService)?.slug ?? '',
   )
   const [date, setDate] = useState<Date | undefined>()
+  const [month, setMonth] = useState<Date>(() => new Date())
   const [slots, setSlots] = useState<Slot[] | null>(null)
+  const [nextDate, setNextDate] = useState<string | null | undefined>(undefined) // undefined = not searched, null = none
   const [selected, setSelected] = useState<string | null>(null)
   const [isLoading, startLoading] = useTransition()
   const requestId = useRef(0) // ignore answers from older requests
@@ -71,14 +80,22 @@ export function BookingPicker({
 
   function load(slug: string, day: Date | undefined) {
     setSelected(null)
+    setNextDate(undefined)
     if (!slug || !day) {
       setSlots(null)
       return
     }
     const id = ++requestId.current
+    const dayStr = toDateStr(day)
     startLoading(async () => {
-      const result = await fetchSlots(slug, toDateStr(day))
-      if (id === requestId.current) setSlots(result)
+      const result = await fetchSlots(slug, dayStr)
+      if (id !== requestId.current) return
+      setSlots(result)
+      // Fully booked: look for the next day that still has room
+      if (result.length === 0) {
+        const next = await findNextAvailable(slug, dayStr)
+        if (id === requestId.current) setNextDate(next)
+      }
     })
   }
 
@@ -96,6 +113,12 @@ export function BookingPicker({
     load(serviceSlug, day)
   }
 
+  const goToDate = (str: string) => {
+    const day = fromDateStr(str)
+    setMonth(day) // the calendar jumps to that month
+    chooseDate(day)
+  }
+
   const chooseSlot = (start: string) => {
     setSelected(start)
     setSlotTaken(false)
@@ -109,15 +132,16 @@ export function BookingPicker({
     return str < today || !openWeekdays.includes(weekday) || closedDates.includes(str)
   }
 
-  // Show the chosen day safely (noon UTC avoids any time-zone day shift)
-  const dateLabel = date
-    ? format.dateTime(new Date(`${toDateStr(date)}T12:00:00Z`), {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        timeZone: 'UTC',
-      })
-    : ''
+  // Show a day safely (noon UTC avoids any time-zone day shift)
+  const formatDay = (str: string) =>
+    format.dateTime(new Date(`${str}T12:00:00Z`), {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      timeZone: 'UTC',
+    })
+
+  const dateLabel = date ? formatDay(toDateStr(date)) : ''
 
   const lastMonth = new Date()
   lastMonth.setMonth(lastMonth.getMonth() + 3)
@@ -212,6 +236,8 @@ export function BookingPicker({
               mode="single"
               selected={date}
               onSelect={chooseDate}
+              month={month}
+              onMonthChange={setMonth}
               disabled={isDisabled}
               locale={locale === 'fr' ? fr : enUS}
               startMonth={new Date()}
@@ -232,7 +258,18 @@ export function BookingPicker({
             ) : isLoading ? (
               <p className="text-muted-foreground">{t('loading')}</p>
             ) : slots && slots.length === 0 ? (
-              <p className="text-muted-foreground">{t('noSlots')}</p>
+              <div className="flex flex-col items-start gap-3">
+                <p className="text-muted-foreground">{t('noSlots')}</p>
+                {nextDate ? (
+                  <Button variant="outline" onClick={() => goToDate(nextDate)}>
+                    <span className="first-letter:uppercase">
+                      {t('nextAvailable', { date: formatDay(nextDate) })}
+                    </span>
+                  </Button>
+                ) : nextDate === null ? (
+                  <p className="text-sm text-muted-foreground">{t('noAvailability')}</p>
+                ) : null}
+              </div>
             ) : (
               <ul className="flex flex-wrap gap-2">
                 {slots?.map((slot) => {

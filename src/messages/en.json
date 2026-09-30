@@ -74,6 +74,8 @@
     "successTitle": "Your appointment is confirmed ✓",
     "successText": "Thank you! We look forward to welcoming you.",
     "bookAnother": "Book another treatment",
-    "alreadyBooked": "You already have an appointment at this time. Please choose another time."
+    "alreadyBooked": "You already have an appointment at this time. Please choose another time.",
+    "nextAvailable": "Next availability: {date} →",
+    "noAvailability": "No availability in the next 60 days."
   }
 }
