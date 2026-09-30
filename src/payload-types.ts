@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     services: Service;
     resources: Resource;
+    bookings: Booking;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     services: ServicesSelect<false> | ServicesSelect<true>;
     resources: ResourcesSelect<false> | ResourcesSelect<true>;
+    bookings: BookingsSelect<false> | BookingsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -230,6 +232,35 @@ export interface Resource {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: number;
+  service: number | Service;
+  resource: number | Resource;
+  startTime: string;
+  /**
+   * Calculated automatically from the service duration.
+   */
+  endTime: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string | null;
+  /**
+   * Language for the confirmation email.
+   */
+  locale?: ('fr' | 'en') | null;
+  status?: ('confirmed' | 'cancelled') | null;
+  notes?: string | null;
+  /**
+   * Automatic. Prevents two bookings on the same slot.
+   */
+  slotKey: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -267,6 +298,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'resources';
         value: number | Resource;
+      } | null)
+    | ({
+        relationTo: 'bookings';
+        value: number | Booking;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -379,6 +414,25 @@ export interface ResourcesSelect<T extends boolean = true> {
   photo?: T;
   services?: T;
   active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings_select".
+ */
+export interface BookingsSelect<T extends boolean = true> {
+  service?: T;
+  resource?: T;
+  startTime?: T;
+  endTime?: T;
+  customerName?: T;
+  customerEmail?: T;
+  customerPhone?: T;
+  locale?: T;
+  status?: T;
+  notes?: T;
+  slotKey?: T;
   updatedAt?: T;
   createdAt?: T;
 }
