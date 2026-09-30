@@ -77,6 +77,12 @@ export function BookingPicker({
 
   const service = services.find((s) => s.slug === serviceSlug)
   const selectedSlot = slots?.find((s) => s.start === selected)
+    // Times grouped by part of the day (easier to scan)
+  const groups: { key: 'morning' | 'afternoon' | 'evening'; slots: Slot[] }[] = [
+    { key: 'morning', slots: (slots ?? []).filter((s) => s.time < '12:00') },
+    { key: 'afternoon', slots: (slots ?? []).filter((s) => s.time >= '12:00' && s.time < '17:00') },
+    { key: 'evening', slots: (slots ?? []).filter((s) => s.time >= '17:00') },
+  ]
 
   function load(slug: string, day: Date | undefined) {
     setSelected(null)
@@ -230,8 +236,7 @@ export function BookingPicker({
       <div className="grid gap-6 md:grid-cols-2">
         {/* 2. Date */}
         <section className="rounded-lg border border-border bg-card p-6">
-          <h2 className={labelStyle}>{t('step2')}</h2>
-          <div className="mt-4 flex justify-center">
+            <div className="mt-4">
             <Calendar
               mode="single"
               selected={date}
@@ -242,6 +247,9 @@ export function BookingPicker({
               locale={locale === 'fr' ? fr : enUS}
               startMonth={new Date()}
               endMonth={lastMonth}
+              // Fill the card: full width, no beige box, bigger day cells
+              className="w-full bg-transparent p-0 [--cell-size:--spacing(11)]"
+              classNames={{ root: 'w-full' }}
             />
           </div>
         </section>
@@ -271,26 +279,35 @@ export function BookingPicker({
                 ) : null}
               </div>
             ) : (
-              <ul className="flex flex-wrap gap-2">
-                {slots?.map((slot) => {
-                  const active = slot.start === selected
-                  return (
-                    <li key={slot.start}>
-                      <button
-                        type="button"
-                        onClick={() => chooseSlot(slot.start)}
-                        aria-pressed={active}
-                        className={cn(
-                          'rounded-full border px-4 py-2 text-sm font-medium transition-colors',
-                          active ? 'border-sage-strong bg-accent' : 'border-input hover:border-primary',
-                        )}
-                      >
-                        {slot.time}
-                      </button>
-                    </li>
-                  )
-                })}
-              </ul>
+                            <div className="flex flex-col gap-6">
+                {groups
+                  .filter((group) => group.slots.length > 0)
+                  .map((group) => (
+                    <div key={group.key}>
+                      <h3 className="mb-3 text-sm font-medium text-muted-foreground">{t(group.key)}</h3>
+                      <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+                        {group.slots.map((slot) => {
+                          const active = slot.start === selected
+                          return (
+                            <li key={slot.start}>
+                              <button
+                                type="button"
+                                onClick={() => chooseSlot(slot.start)}
+                                aria-pressed={active}
+                                className={cn(
+                                  'w-full rounded-full border py-3 text-sm font-medium transition-colors',
+                                  active ? 'border-sage-strong bg-accent' : 'border-input hover:border-primary',
+                                )}
+                              >
+                                {slot.time}
+                              </button>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </div>
+                  ))}
+              </div>
             )}
           </div>
         </section>
