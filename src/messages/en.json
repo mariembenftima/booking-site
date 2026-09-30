@@ -79,6 +79,16 @@
     "bookAnother": "Book another treatment",
     "alreadyBooked": "You already have an appointment at this time. Please choose another time.",
     "nextAvailable": "Next availability: {date} →",
-    "noAvailability": "No availability in the next 60 days."
+    "noAvailability": "No availability in the next 60 days.",
+    "Meta": {
+    "homeTitle": "Beauty & wellness salon",
+    "homeDescription": "Facials, massages and hammam in a calm place. Book your appointment online in under a minute.",
+    "servicesTitle": "Our treatments",
+    "servicesDescription": "Discover our facials, massages, hammam and manicure, with duration and price. Book online.",
+    "contactTitle": "Contact & opening hours",
+    "contactDescription": "Address, phone and opening hours. A question? Call or write to us.",
+    "bookingTitle": "Book online",
+    "bookingDescription": "Choose your treatment, date and time. Simple online booking with email confirmation."
+  }
   }
 }

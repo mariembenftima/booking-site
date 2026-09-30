@@ -2,6 +2,12 @@ import { getTranslations } from 'next-intl/server'
 import { ArrowRight, CalendarCheck, Flower2, Leaf } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
+import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  return pageMetadata(locale, '/', 'home')
+}
 
 const LEAF = 'M0 40A40 40 0 0 1 40 0A40 40 0 0 1 0 40Z'
 

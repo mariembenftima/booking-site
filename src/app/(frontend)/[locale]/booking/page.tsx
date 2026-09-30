@@ -5,7 +5,13 @@ import config from '@payload-config'
 import { routing } from '@/i18n/routing'
 import { BUSINESS_TIMEZONE, todayInZone } from '@/lib/time'
 import { BookingPicker } from '@/components/booking/BookingPicker'
+import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  return pageMetadata(locale, '/booking', 'booking')
+}
 export default async function BookingPage({
   searchParams,
 }: {

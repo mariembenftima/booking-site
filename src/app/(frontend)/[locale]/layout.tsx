@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { Geist, Cormorant_Garamond } from 'next/font/google'
@@ -18,6 +19,18 @@ const cormorant = Cormorant_Garamond({
   weight: ['600', '700'],
   variable: '--font-cormorant',
 })
+
+// Site-wide SEO defaults: absolute URLs + "Page title · Business name"
+export async function generateMetadata(): Promise<Metadata> {
+  const payload = await getPayload({ config })
+  const settings = await payload.findGlobal({ slug: 'site-settings' })
+  const name = settings.businessName || 'Booking'
+
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+    title: { default: name, template: `%s · ${name}` },
+  }
+}
 
 export default async function LocaleLayout({
   children,

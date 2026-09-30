@@ -6,7 +6,12 @@ import config from '@payload-config'
 import { ArrowRight, Clock, Leaf } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
-
+import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  return pageMetadata(locale, '/services', 'services')
+}
 export default async function ServicesPage() {
   const requested = await getLocale()
   const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale

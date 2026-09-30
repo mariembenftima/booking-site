@@ -80,5 +80,16 @@
     "alreadyBooked": "Vous avez déjà un rendez-vous à cette heure-là. Choisissez un autre horaire.",
     "nextAvailable": "Prochaine disponibilité : {date} →",
     "noAvailability": "Aucune disponibilité dans les 60 prochains jours."
+    
+  },
+  "Meta": {
+    "homeTitle": "Institut de beauté & bien-être",
+    "homeDescription": "Soins du visage, massages et hammam dans un lieu calme. Réservez votre rendez-vous en ligne en moins d’une minute.",
+    "servicesTitle": "Nos soins",
+    "servicesDescription": "Découvrez nos soins du visage, massages, hammam et manucure, avec leur durée et leur prix. Réservez en ligne.",
+    "contactTitle": "Contact & horaires",
+    "contactDescription": "Adresse, téléphone et horaires d’ouverture. Une question ? Appelez-nous ou écrivez-nous.",
+    "bookingTitle": "Réserver en ligne",
+    "bookingDescription": "Choisissez votre soin, votre date et votre horaire. Réservation en ligne simple, confirmation par e-mail."
   }
 }
