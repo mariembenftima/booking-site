@@ -40,10 +40,27 @@
     "ctaTitle": "Ready for a moment of calm?",
     "cta": "Book an appointment"
   },
-  "Footer": {
+    "Footer": {
     "tagline": "Beauty & wellness, by appointment.",
     "explore": "Explore",
     "founder": "Founder",
     "rights": "© {year} {name}. All rights reserved."
+  },
+  "Booking": {
+    "eyebrow": "Booking",
+    "title": "Book your moment",
+    "subtitle": "Choose a treatment, a date, then the time that suits you.",
+    "step1": "1. Treatment",
+    "step2": "2. Date",
+    "step3": "3. Time",
+    "duration": "{minutes} min",
+    "price": "{price} DT",
+    "pickServiceFirst": "Choose a treatment first.",
+    "pickDateFirst": "Then choose a date.",
+    "loading": "Looking for free times…",
+    "noSlots": "No free times left on this day. Try another date.",
+    "summary": "Your choice",
+    "continue": "Continue",
+    "continueSoon": "Next step: your details"
   }
 }

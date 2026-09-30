@@ -40,10 +40,27 @@
     "ctaTitle": "Envie d’un moment de calme ?",
     "cta": "Prendre rendez-vous"
   },
-  "Footer": {
+    "Footer": {
     "tagline": "Beauté & bien-être, sur rendez-vous.",
     "explore": "Explorer",
     "founder": "Fondatrice",
     "rights": "© {year} {name}. Tous droits réservés."
+  },
+  "Booking": {
+    "eyebrow": "Réservation",
+    "title": "Réservez votre moment",
+    "subtitle": "Choisissez un soin, une date, puis l’horaire qui vous convient.",
+    "step1": "1. Le soin",
+    "step2": "2. La date",
+    "step3": "3. L’horaire",
+    "duration": "{minutes} min",
+    "price": "{price} DT",
+    "pickServiceFirst": "Choisissez d’abord un soin.",
+    "pickDateFirst": "Choisissez ensuite une date.",
+    "loading": "Recherche des horaires libres…",
+    "noSlots": "Plus aucun horaire libre ce jour-là. Essayez une autre date.",
+    "summary": "Votre choix",
+    "continue": "Continuer",
+    "continueSoon": "Prochaine étape : vos coordonnées"
   }
 }
