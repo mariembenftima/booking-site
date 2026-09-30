@@ -45,7 +45,7 @@ export default async function ServicesPage() {
         </p>
       ) : (
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {services.map((service) => {
+          {services.map((service, index) => {
             // image is either a populated Media object, an id, or empty
             const image = service.image && typeof service.image === 'object' ? service.image : null
 
@@ -62,6 +62,9 @@ export default async function ServicesPage() {
                       alt={image.alt ?? ''}
                       fill
                       sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      // First row: load right away (the first image is the LCP), the rest lazily
+                      loading={index < 3 ? 'eager' : 'lazy'}
+                      fetchPriority={index === 0 ? 'high' : 'auto'}
                       className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-105"
                     />
                   ) : (
