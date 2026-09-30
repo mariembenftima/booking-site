@@ -12,7 +12,7 @@ const OG_LOCALE = { fr: 'fr_FR', en: 'en_US' } as const
 // "/services" → "/fr/services" · "/" → "/fr"
 const localized = (locale: string, path: string) => `/${locale}${path === '/' ? '' : path}`
 
-/** Title, description, canonical, hreflang and Open Graph for one page in one language */
+/** Title, description, canonical, hreflang, Open Graph and Twitter card for one page in one language */
 export async function pageMetadata(requestedLocale: string, path: string, page: PageKey): Promise<Metadata> {
   const locale = hasLocale(routing.locales, requestedLocale) ? requestedLocale : routing.defaultLocale
   const t = await getTranslations({ locale, namespace: 'Meta' })
@@ -23,6 +23,7 @@ export async function pageMetadata(requestedLocale: string, path: string, page: 
   const title = t(`${page}Title` as const)
   const description = t(`${page}Description` as const)
   const url = localized(locale, path)
+  const image = { url: `/${locale}/og`, width: 1200, height: 630, alt: settings.businessName ?? title }
 
   return {
     title,
@@ -43,6 +44,13 @@ export async function pageMetadata(requestedLocale: string, path: string, page: 
       siteName: settings.businessName ?? undefined,
       locale: OG_LOCALE[locale],
       alternateLocale: routing.locales.filter((l) => l !== locale).map((l) => OG_LOCALE[l]),
+      images: [image],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image.url],
     },
   }
 }
