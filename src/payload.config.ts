@@ -10,6 +10,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Services } from './collections/Services'
 import { Resources } from './collections/Resources'
+import { Bookings } from './collections/Bookings'
 import { SiteSettings } from './globals/SiteSettings'
 import { BusinessHours } from './globals/BusinessHours'
 
@@ -32,7 +33,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Services, Resources],
+  collections: [Users, Media, Services, Resources, Bookings],
   globals: [SiteSettings, BusinessHours],
   editor: lexicalEditor(),
 
@@ -57,7 +58,7 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    // Live site: store uploads in Vercel Blob. Locally (no token): uploads stay on disk.
+    // Store uploads in Vercel Blob (token in Vercel and in local .env)
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
       collections: { media: true },
