@@ -61,7 +61,10 @@ export default buildConfig({
     // Store uploads in Vercel Blob (token in Vercel and in local .env)
     vercelBlobStorage({
       enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
-      collections: { media: true },
+      collections: {
+        // Public images: link straight to the Blob CDN instead of going through /api/media
+        media: { disablePayloadAccessControl: true },
+      },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],

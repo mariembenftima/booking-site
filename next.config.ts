@@ -11,11 +11,14 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   images: {
+    // Images served through Payload (older URLs, admin previews)
     localPatterns: [
       {
         pathname: '/api/media/file/**',
       },
     ],
+    // Images served straight from the Vercel Blob CDN (faster)
+    remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
