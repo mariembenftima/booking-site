@@ -1,67 +1,126 @@
-# Payload Blank Template
+# Maison Sauge · Bilingual booking site
 
-This template comes configured with the bare minimum to get started on anything you need.
+A bilingual (French / English) website for a beauty & wellness salon: clients browse treatments and **book online in under a minute**; the owner manages services, staff, hours and bookings from a **branded admin panel**.
 
-## Quick start
+**🌍 Live:** https://booking-site-eight-pi.vercel.app · **📝 Case study:** [CASE_STUDY.md](CASE_STUDY.md) · **🎬 Video:** _[Loom link]_
 
-This template can be deployed directly from our Cloud hosting and it will setup MongoDB and cloud S3 object storage for media.
+![Homepage](docs/screenshots/home.png)
 
-## Quick Start - local setup
+## Features
 
-To spin up this template locally, follow these steps:
+- **Two languages** (`/fr`, `/en`) with a flag switcher, `hreflang` links and content the owner edits in both languages
+- **Live availability**: free times computed from opening hours, lunch breaks, holidays, service duration, staff and existing bookings
+- **No double bookings**: a unique `slotKey` per staff member and start time, enforced by Postgres
+- **Smart booking rules**: same client can't overlap themselves, next available date on fully booked days, booking window, past times hidden
+- **Confirmation emails** in the client's language (client + owner), built with React Email
+- **Branded admin panel** (Payload CMS) a non-technical owner can use
+- **SEO**: per-page metadata, dynamic sitemap, `robots.txt`, generated Open Graph image per language
+- **Lighthouse (mobile):** Performance 96 · Accessibility 98 · Best Practices 100 · SEO 92
 
-### Clone
+| Booking | Admin |
+| --- | --- |
+| ![Booking page](docs/screenshots/booking.png) | ![Admin panel](docs/screenshots/admin.png) |
 
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
+## Tech stack
 
-### Development
+**Next.js 16** (App Router, Server Actions) · **Payload CMS 3** · **Neon Postgres** · **Vercel** + **Vercel Blob** · **next-intl** · **Resend** + **React Email** · **Zod** · **Tailwind CSS** + **shadcn/ui** · **TypeScript**
 
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `MONGODB_URL` from your Cloud project to your `.env` if you want to use S3 storage and the MongoDB database that was created for you.
+Why each one: see [CASE_STUDY.md › My role & the stack](CASE_STUDY.md#2-my-role--the-stack).
 
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
+## Project structure
 
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
+```
+src/
+├── app/
+│   ├── (frontend)/[locale]/     # public site: /fr, /en
+│   │   ├── page.tsx             # home
+│   │   ├── services/  contact/  booking/
+│   │   ├── booking/actions.ts   # Server Actions: fetchSlots, findNextAvailable, createBooking
+│   │   └── og/route.tsx         # Open Graph image per language
+│   ├── (payload)/               # Payload admin (/admin) and API (/api)
+│   ├── sitemap.ts  robots.ts
+├── collections/                 # Users, Media, Services, Resources, Bookings
+├── globals/                     # SiteSettings, BusinessHours
+├── components/                  # Header, Footer, LanguageSwitcher, booking/BookingPicker, admin/
+├── emails/                      # React Email templates
+├── lib/                         # business logic (no UI)
+│   ├── time.ts                  # time-zone helpers (store UTC, show business time)
+│   ├── availability.ts          # pure slot computation
+│   ├── getAvailability.ts       # loads Payload data → availability
+│   ├── sendBookingEmails.tsx
+│   └── *.check.ts               # check scripts for the logic
+├── i18n/                        # next-intl routing, request config, navigation
+├── messages/fr.json, en.json    # fixed UI text (typed)
+├── proxy.ts                     # language detection (skips /admin, /api, files)
+└── payload.config.ts
+```
 
-#### Docker (Optional)
+## Getting started
 
-If you prefer to use Docker for local development instead of a local MongoDB instance, the provided docker-compose.yml file can be used.
+**Requirements:** Node.js 20+, a [Neon](https://neon.tech) Postgres database, and (optional) [Resend](https://resend.com) and Vercel Blob tokens.
 
-To do so, follow these steps:
+```bash
+git clone https://github.com/mariembenftima/booking-site.git
+cd booking-site
+npm install
+cp .env.example .env      # Windows PowerShell: Copy-Item .env.example .env
+```
 
-- Modify the `MONGODB_URL` in your `.env` file to `mongodb://127.0.0.1/<dbname>`
-- Modify the `docker-compose.yml` file's `MONGODB_URL` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
+Fill in `.env` (see the table below), then:
 
-## How it works
+```bash
+npm run dev
+```
 
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
+Open http://localhost:3000/admin, create the first admin user, then add:
 
-### Collections
+1. **Settings → Site settings**: business name, tagline, contact details
+2. **Settings → Business hours**: slot interval and opening hours per weekday
+3. **Services** (in French and English) and **Resources** (staff), linking each resource to its services
 
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
+The site is then live at http://localhost:3000/fr and `/en`.
 
-- #### Users (Authentication)
+### Environment variables
 
-  Users are auth-enabled collections that have access to the admin panel.
+| Variable | Purpose |
+| --- | --- |
+| `DATABASE_URL` | Neon **pooled** connection string (`…-pooler…`, `sslmode=verify-full`) |
+| `PAYLOAD_SECRET` | Random secret, e.g. `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token (uploads go to the Blob CDN) |
+| `BUSINESS_TIMEZONE` | IANA time zone of the business, e.g. `Africa/Tunis` |
+| `RESEND_API_KEY` | Resend API key for booking emails |
+| `EMAIL_FROM` | Sender, e.g. `Maison Sauge <bookings@yourdomain.com>` |
+| `OWNER_EMAIL` | Optional override for the owner notification (useful in Resend test mode) |
+| `NEXT_PUBLIC_SITE_URL` | Public URL, used for canonical links, sitemap and Open Graph |
 
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/3.x/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
+> ⚠️ **Never point your local `.env` at the production database.** Payload's dev mode pushes schema changes automatically, which breaks production migrations. Use a separate database or a Neon branch of production.
 
-- #### Media
+## Useful commands
 
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the dev server |
+| `npm run ci` | `payload migrate && next build` (the Vercel build command) |
+| `npx tsc --noEmit` | Type-check the whole project |
+| `npx payload generate:types` | Regenerate `payload-types.ts` after changing a collection or global |
+| `npx payload migrate:create <name>` | Create a migration for schema changes (commit it!) |
+| `npx payload generate:importmap` | Register new admin components |
+| `npx tsx src/lib/availability.check.ts` | Run the availability checks (8 cases, including DST) |
+| `npx tsx src/lib/time.check.ts` | Run the time-zone checks |
 
-### Docker
+## Deployment (Vercel)
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+1. Import the repository in Vercel (framework: Next.js)
+2. **Storage** → create a **Blob** store and connect it
+3. Add every environment variable above (with the **production** database URL and site URL)
+4. **Build command:** `npm run ci` (runs pending migrations before each build)
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+Every push to `main` deploys automatically.
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+## Reuse for another business
 
-## Questions
+The code is white-label: collections use generic names (`Services`, `Resources` = a person *or* a place), all business content lives in Payload, and the brand lives in CSS variables in `src/app/(frontend)/styles.css`. A new business = a new deployment with its own database, content and colour block.
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+## Author
+
+**_[Your full name]_**, software engineer · [GitHub](https://github.com/mariembenftima) · _[LinkedIn]_
